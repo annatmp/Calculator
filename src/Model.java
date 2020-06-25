@@ -1,5 +1,6 @@
-public class Model {
 
+
+public class Model {
 
     private static double add(double ... y){
         double solution = 0;

@@ -1,5 +1,3 @@
-import com.sun.deploy.util.StringUtils;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -7,7 +5,8 @@ import java.awt.event.ActionListener;
 
 public class CalcView extends JFrame{
 
-    private JButton[] buttons = new JButton[12];
+    private JButton[] buttons = new JButton[9];
+    private JButton[] bottomRow = new JButton[3];
     private JPanel numberBlockPanel = new JPanel(new GridLayout(4,3));
     private JPanel mathOperatorsPanel = new JPanel(new GridLayout(4,1));
     private JButton[] operators = new JButton[4];
@@ -19,12 +18,18 @@ public class CalcView extends JFrame{
         this.setSize(300,400);
 
         //number section
-        String[] values = {"7","8","9","4","5","6","1","2","3",".","0","="};
-        for(int i = 0; i < 12; i++) {
+        String[] values = {"7","8","9","4","5","6","1","2","3"};
+        for(int i = 0; i < 9; i++) {
             this.buttons[i] = new JButton(values[i]);
             this.numberBlockPanel.add(buttons[i]);
         }
+        //bottom row
+        String[] bottom_values = {".","0","="};
+        for (int i = 0; i < 3; i++) {
+            this.bottomRow[i] = new JButton(bottom_values[i]);
+            this.numberBlockPanel.add(bottomRow[i]);
 
+        }
         //basic operators
 
 
@@ -60,8 +65,31 @@ public class CalcView extends JFrame{
         this.textline.setText(newtext);
     }
 
+    public char getLastInputChar() {
+        String input = this.textline.getText();
+        char lastChar = input.charAt(input.length()-1);
+        return lastChar;
+    }
+
+    public char[] getInput() {
+        String input_line = this.textline.getText();
+        char[] input = new char[input_line.length()];
+
+        for (int i = 0; i < input_line.length(); i++) {
+            input[i] = input_line.charAt(i);
+        }
+
+        return input;
+    }
+
     public int getButtonValue(JButton button) {
         int buttonValue = Integer.parseInt(button.getText());
+
+        return buttonValue;
+    }
+
+    public String getBottomRowValue(JButton button) {
+        String buttonValue = button.getText();
 
         return buttonValue;
     }
@@ -86,5 +114,11 @@ public class CalcView extends JFrame{
 
     void addDeleteListener(ActionListener listenForDeletePress){
         delete.addActionListener(listenForDeletePress);
+    }
+
+    void addbottomRowListener(ActionListener listenForBottomRow) {
+        for (JButton button: bottomRow) {
+            button.addActionListener(listenForBottomRow);
+        }
     }
 }

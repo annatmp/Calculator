@@ -4,12 +4,13 @@ public class Model {
     /**
      * A calculator which allows to calculate with basic operators
      * Can work with string and int based inputs
-     * @param y
-     * @return
      */
 
     private int MAX_OPERATOR = 5;
     private int MAX_NUMBERS = 10;
+    private double[] numbers;
+    private char[] operators;
+    private int numberCount;
 
 
     private static double add(double ... y){
@@ -30,24 +31,30 @@ public class Model {
         }
         return solution;
     }
+
+    /**
+     *
+     * @param x dividend
+     * @param y divisor
+     * @throws ArithmeticException when dividing by 0
+     * @return quotient
+     */
     private static double divide(double x,double ...y) {
         double solution = x;
         for (double factor:y) {
+            if (factor == 0){
+                throw new ArithmeticException("Cannot divide by 0");
+            }
             solution /= factor;
         }
         return solution;
     }
 
-    /**
-     * translates an String input into actionable sequences and calculates the result
-     * @param input
-     * @throws IndexOutOfBoundsException
-     */
-    public String eval(String input){
+    private void translate_string(String input) {
 
-        double[] numbers = new double[MAX_NUMBERS];
-        int numberCount = 0;
-        char[] operators = new char[MAX_OPERATOR];
+        numbers = new double[MAX_NUMBERS];
+        numberCount = 0;
+        operators = new char[MAX_OPERATOR];
         int operatorCount = 0;
         //todo
         String result = "xx";
@@ -64,7 +71,7 @@ public class Model {
                 continue;
             }
 
-            if ("+-*/".contains(current)) {
+            if ("+-*\\".contains(current)) {
 
                 String number = input.substring(cutoff,i);
 
@@ -81,9 +88,60 @@ public class Model {
 
 
         //store the last number:
-        String lastNumber = input.substring(cutoff,input.length()-1);
+        String lastNumber = input.substring(cutoff);
         numbers[numberCount] = Double.parseDouble(lastNumber);
         numberCount++;
+
+    }
+
+    private double calculate_result(){
+        double result;
+        int operator_pos = 0;
+        double tmp_result = numbers[0];
+
+        for (int i = 1; i < numberCount; i++) {
+            double value = numbers[i];
+
+            char operator = operators[operator_pos++];
+
+            switch (operator) {
+                case '+':
+                    tmp_result = add(tmp_result, value);
+                    break;
+                case '-':
+                    tmp_result = substract(tmp_result, value);
+                    break;
+                case '\\':
+
+                    tmp_result = divide(tmp_result, value);
+                    break;
+                case '*':
+                    tmp_result = multiply(tmp_result,value);
+            }
+        }
+
+        result = tmp_result;
+
+        return result;
+    }
+
+    /**
+     * translates an String input into actionable sequences and calculates the result
+     * @param input as String from calculator text field
+     */
+    public String calc(String input){
+
+        String result;
+
+        translate_string(input);
+        double double_result = calculate_result();
+
+        if(double_result % 1 == 0){
+            result = Integer.toString((int) double_result);
+        }
+        else {
+            result = Double.toString(double_result);
+        }
 
         return result;
     }
